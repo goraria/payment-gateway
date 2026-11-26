@@ -1,0 +1,21 @@
+[
+  "GET /health",
+  "GET /payment",
+  "GET /payment/:id",
+  "GET /payment/provider",
+  "GET /payment/return/:provider",
+  "GET /payment/webhook/vnpay",
+  "HEAD /health",
+  "HEAD /payment",
+  "HEAD /payment/:id",
+  "HEAD /payment/provider",
+  "HEAD /payment/return/:provider",
+  "HEAD /payment/webhook/vnpay",
+  "POST /payment/:id/cancel",
+  "POST /payment/:id/query",
+  "POST /payment/:id/refund",
+  "POST /payment/intent",
+  "POST /payment/webhook/momo",
+  "POST /payment/webhook/stripe",
+  "POST /payment/webhook/zalopay"
+]
