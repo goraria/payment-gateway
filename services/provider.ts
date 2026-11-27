@@ -19,9 +19,9 @@ import {
   vnPayPaymentUrl,
   vnPayTmnCode,
   zaloPayApiUrl,
-  zaloPayAppId,
-  zaloPayKey1,
-  zaloPayKey2,
+  zaloPayMerchantAppId,
+  zaloPayMerchantKey1,
+  zaloPayMerchantKey2,
 } from "@/utils/environment";
 import type { CreatePaymentInput } from "@/schemas/payment";
 
@@ -230,8 +230,8 @@ async function createZaloPayPayment(
 ): Promise<ProviderPaymentResult> {
   if (input.currency !== "VND")
     throw new ServiceError("zalopay_requires_vnd", 422);
-  const appId = Number(required(zaloPayAppId, "zalopay_app_id"));
-  const key1 = required(zaloPayKey1, "zalopay_key1");
+  const appId = Number(required(zaloPayMerchantAppId, "zalopay_app_id"));
+  const key1 = required(zaloPayMerchantKey1, "zalopay_key1");
   const appTransId = `${zaloDatePrefix()}_${input.paymentId.replaceAll("-", "").slice(0, 24)}`;
   const appTime = Date.now();
   const appUser = input.application;
@@ -448,8 +448,8 @@ export async function queryProviderPayment(
   }
 
   if (provider === "zalopay") {
-    const appId = Number(required(zaloPayAppId, "zalopay_app_id"));
-    const key1 = required(zaloPayKey1, "zalopay_key1");
+    const appId = Number(required(zaloPayMerchantAppId, "zalopay_app_id"));
+    const key1 = required(zaloPayMerchantKey1, "zalopay_key1");
     const body = new URLSearchParams({
       app_id: String(appId),
       app_trans_id: providerPaymentId,
@@ -571,14 +571,14 @@ export function verifyZaloPayWebhook(data: string, mac: string) {
   if (
     !constantTimeEqual(
       mac,
-      hmac("sha256", required(zaloPayKey2, "zalopay_key2"), data),
+      hmac("sha256", required(zaloPayMerchantKey2, "zalopay_key2"), data),
     )
   )
     return false;
   try {
     return (
       String(JSON.parse(data).app_id) ===
-      required(zaloPayAppId, "zalopay_app_id")
+      required(zaloPayMerchantAppId, "zalopay_app_id")
     );
   } catch {
     return false;
@@ -683,7 +683,7 @@ export async function refundProviderPayment(
     };
   }
   if (provider === "zalopay") {
-    const appId = required(zaloPayAppId, "zalopay_app_id");
+    const appId = required(zaloPayMerchantAppId, "zalopay_app_id");
     const timestamp = Date.now();
     const id = refundRequestReference(
       provider,
@@ -692,7 +692,7 @@ export async function refundProviderPayment(
     )!;
     const mac = hmac(
       "sha256",
-      required(zaloPayKey1, "zalopay_key1"),
+      required(zaloPayMerchantKey1, "zalopay_key1"),
       `${appId}|${context.providerTransactionId}|${amount}|${description}|${timestamp}`,
     );
     const payload = await fetchJson(
@@ -817,7 +817,7 @@ export function refundRequestReference(
   if (provider === "stripe") return undefined;
   const compact = id.replaceAll("-", "");
   return provider === "zalopay"
-    ? `${vnPayDate(createdAt).slice(2, 8)}_${required(zaloPayAppId, "zalopay_app_id")}_${compact.slice(0, 24)}`
+    ? `${vnPayDate(createdAt).slice(2, 8)}_${required(zaloPayMerchantAppId, "zalopay_app_id")}_${compact.slice(0, 24)}`
     : compact;
 }
 export function momoRefundStatus(
@@ -885,11 +885,11 @@ export async function queryProviderRefund(provider: ProviderCode, id: string) {
     return momoRefundStatus(result.resultCode);
   }
   if (provider === "zalopay") {
-    const appId = required(zaloPayAppId, "zalopay_app_id"),
+    const appId = required(zaloPayMerchantAppId, "zalopay_app_id"),
       timestamp = String(Date.now());
     const mac = hmac(
       "sha256",
-      required(zaloPayKey1, "zalopay_key1"),
+      required(zaloPayMerchantKey1, "zalopay_key1"),
       `${appId}|${id}|${timestamp}`,
     );
     const result = await fetchJson(

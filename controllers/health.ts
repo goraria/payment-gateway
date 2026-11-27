@@ -1,8 +1,16 @@
-import type { ApiContext } from "@/types/auth";
+import type { Event } from "@/utils/interface";
 
-export function actHealth(context: ApiContext) {
-  return context.json(
-    { status: "OK", service: "payment-gateway" },
-    { headers: { "content-type": "application/json; charset=UTF-8" } },
-  );
+const service = "payment-gateway";
+
+export function actHealth(context: Event) {
+  return context.json({
+    status: "ok",
+    service,
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+}
+
+export function actStatus(context: Event) {
+  return context.json({ status: "ok", service });
 }

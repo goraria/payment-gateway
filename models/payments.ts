@@ -26,7 +26,7 @@ import {
   type NormalizedProviderStatus,
   type ProviderCode,
 } from "@/services/provider";
-import type { AuthContext } from "@/types/auth";
+import type { AuthContext } from "@/utils/interface";
 import { authoritativePaymentInput,authoritativeRefund,isCommerceOrder } from '@/services/commerce-order';
 import type { RawCreatePaymentInput } from '@/schemas/payment';
 import { rawEnqueueCommerce } from '@/models/commerce-delivery';

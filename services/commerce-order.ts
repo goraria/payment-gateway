@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { isProduction } from '@/utils/environment';
 import { ServiceError } from '@/lib/errors';
 import type { RawCreatePaymentInput,CreatePaymentInput } from '@/schemas/payment';
-import type { AuthContext } from '@/types/auth';
+import type { AuthContext } from '@/utils/interface';
 export async function managedCommerceOrigin(){
   const commerceUrl = await getServiceOrigin("commerce");
   if(!commerceUrl) throw new ServiceError('commerce_not_configured',503);

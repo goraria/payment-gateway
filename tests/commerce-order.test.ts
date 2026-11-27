@@ -13,7 +13,7 @@ vi.mock("@/utils/sso-directory", () => ({
 import {beforeEach,afterEach,it,expect,vi} from 'vitest';
 vi.mock('@/utils/environment',()=>({commerceUrl:'https://commerce.test',isProduction:true}));
 import {authoritativePaymentInput} from '@/services/commerce-order';
-import type {AuthContext} from '@/types/auth';
+import type {AuthContext} from '@/utils/interface';
 const auth={application:'marketplace',accessToken:'private-grant',user:{id:'local',externalUserId:'buyer-subject'}} as AuthContext;
 const input={application:'marketplace',referenceType:'order',referenceId:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',provider:'stripe' as const};
 const quote={orderId:input.referenceId,subject:'buyer-subject',amountMinor:50000,currency:'VND',payable:true};

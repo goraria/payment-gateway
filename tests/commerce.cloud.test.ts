@@ -18,7 +18,7 @@ vi.mock('@/services/provider',()=>({createProviderPayment:state.provider,resumeP
 import {database,pool} from '@/database';
 import {rawCreatePayment,rawProcessProviderEvent,rawRefundPayment} from '@/models/payments';
 import {rawDispatchCommerce} from '@/models/commerce-delivery';
-import type {AuthContext} from '@/types/auth';
+import type {AuthContext} from '@/utils/interface';
 const uid=crypto.randomUUID(),oid=crypto.randomUUID(),sub='payment-cloud-'+uid;
 const auth={application:'marketplace',clientId:'gorth-online-marketplace-solution',sessionId:null,accessToken:'fixture-user-grant',scopes:['marketplace:write'],user:{id:uid,externalUserId:sub,role:'user'}} as AuthContext;
 const input={application:'marketplace',referenceType:'order',referenceId:oid,provider:'stripe' as const};

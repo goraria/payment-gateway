@@ -13,7 +13,7 @@ import {
 import {
   applicationNamespaces as applications,
   applicationScopes,
-} from "@/lib/constants";
+} from "@/utils/constant";
 import { nodeEnv, authUrl } from "@/utils/environment";
 import type { ServiceAccess } from "@/utils/interface";
 async function configuration() {

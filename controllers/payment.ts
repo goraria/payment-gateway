@@ -1,4 +1,4 @@
-import type { ApiContext } from "@/types/auth";
+import type { Event } from "@/utils/interface";
 import { getQueryValues, readRequestBody } from "@/utils/request";
 import type Stripe from "stripe";
 import { ServiceError } from "@/lib/errors";
@@ -24,7 +24,7 @@ import {
   verifyZaloPayWebhook,
 } from "@/services/provider";
 
-function clientIp(context: ApiContext) {
+function clientIp(context: Event) {
   return (
     context.req.header("cf-connecting-ip") ??
     context.req.header("x-vercel-forwarded-for")?.split(",")[0]?.trim() ??
@@ -33,7 +33,7 @@ function clientIp(context: ApiContext) {
     "127.0.0.1"
   );
 }
-export async function actListPayments(context: ApiContext) {
+export async function actListPayments(context: Event) {
   return context.json(
     await listPaymentsServices(
       listPaymentSchema.parse(getQueryValues(context.req.raw)),
@@ -42,7 +42,7 @@ export async function actListPayments(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actGetPayment(context: ApiContext) {
+export async function actGetPayment(context: Event) {
   return context.json(
     await getPaymentServices(
       uuidSchema.parse(context.req.param("id")!),
@@ -51,7 +51,7 @@ export async function actGetPayment(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actCreatePayment(context: ApiContext) {
+export async function actCreatePayment(context: Event) {
   const idempotencyKey = context.req.header("idempotency-key")?.trim() ?? "";
   const result = await createPaymentServices(
     createPaymentSchema.parse(await readRequestBody(context.req)),
@@ -64,7 +64,7 @@ export async function actCreatePayment(context: ApiContext) {
     headers: { "content-type": "application/json; charset=UTF-8" },
   });
 }
-export async function actQueryPayment(context: ApiContext) {
+export async function actQueryPayment(context: Event) {
   return context.json(
     await queryPaymentServices(
       uuidSchema.parse(context.req.param("id")!),
@@ -73,7 +73,7 @@ export async function actQueryPayment(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actCancelPayment(context: ApiContext) {
+export async function actCancelPayment(context: Event) {
   return context.json(
     await cancelPaymentServices(
       uuidSchema.parse(context.req.param("id")!),
@@ -82,7 +82,7 @@ export async function actCancelPayment(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actRefundPayment(context: ApiContext) {
+export async function actRefundPayment(context: Event) {
   return context.json(
     await refundPaymentServices(
       uuidSchema.parse(context.req.param("id")!),
@@ -99,7 +99,7 @@ export async function actRefundPayment(context: ApiContext) {
 function stripePaymentIntent(event: Stripe.Event) {
   return event.data.object as Stripe.PaymentIntent;
 }
-export async function actStripeWebhook(context: ApiContext) {
+export async function actStripeWebhook(context: Event) {
   const signature = context.req.header("stripe-signature");
   if (!signature) throw new ServiceError("missing_stripe_signature", 400);
   let event: Stripe.Event;
@@ -149,7 +149,7 @@ export async function actStripeWebhook(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actMomoWebhook(context: ApiContext) {
+export async function actMomoWebhook(context: Event) {
   const payload = (await readRequestBody(context.req)) as Record<string, unknown>;
   if (!verifyMomoWebhook(payload))
     throw new ServiceError("invalid_momo_signature", 400);
@@ -185,7 +185,7 @@ export async function actMomoWebhook(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actZaloPayWebhook(context: ApiContext) {
+export async function actZaloPayWebhook(context: Event) {
   const payload = (await readRequestBody(context.req)) as {
     data?: string;
     mac?: string;
@@ -222,7 +222,7 @@ export async function actZaloPayWebhook(context: ApiContext) {
     { headers: { "content-type": "application/json; charset=UTF-8" } },
   );
 }
-export async function actVnPayWebhook(context: ApiContext) {
+export async function actVnPayWebhook(context: Event) {
   const parameters = getQueryValues(context.req.raw);
   if (!verifyVnPayParameters(parameters)) {
     return context.json(
@@ -272,7 +272,7 @@ export async function actVnPayWebhook(context: ApiContext) {
     throw error;
   }
 }
-export async function actPaymentReturn(context: ApiContext) {
+export async function actPaymentReturn(context: Event) {
   const provider = context.req.param("provider")!;
   if (provider !== "vnpay") {
     return context.json(
