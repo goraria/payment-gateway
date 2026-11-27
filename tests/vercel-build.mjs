@@ -44,9 +44,11 @@ if (expectedTopic) {
 }
 assert.deepEqual(
   (read("config.json").crons ?? []).map((cron) => cron.schedule).sort(),
-  ["* * * * *"].sort(),
+  ["0 0 * * *"],
 );
 const checks = [
+  ["/", "GET", 200],
+  ["/", "HEAD", 200],
   ["/health", "GET", 200],
   ["/health", "HEAD", 200],
   ["/health/", "GET", 404],
