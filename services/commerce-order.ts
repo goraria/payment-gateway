@@ -1,4 +1,4 @@
-import { getServiceOrigin } from "@/utils/sso-directory";
+import { getServiceOrigin } from "@/modules/structure/sso-directory";
 import { z } from 'zod';
 import { isProduction } from '@/utils/environment';
 import { ServiceError } from '@/lib/errors';

@@ -12,11 +12,11 @@ it("uses the service/auth URL contract and the matching development port", () =>
   expect(example).not.toMatch(/\bVITE_/);
   expect(environment).not.toMatch(/\bVITE_/);
   expect(example).toContain("NITRO_PUBLIC_PORT=5055");
-  expect(example).not.toContain("NITRO_PUBLIC_SERVICE_URL=");
+  expect(environment).toContain("process.env.NITRO_PUBLIC_SERVICE_URL");
+  expect(example).toContain("NITRO_PUBLIC_SERVICE_URL=http://localhost:5055");
   expect(example).not.toMatch(/^(?:NITRO_PORT|PORT)=/m);
   expect(example).toContain("NITRO_PUBLIC_AUTH_URL=https://gorth-auth.vercel.app");
   expect(manifest.scripts.dev).toBe("nitro dev --port 5055 --host 0.0.0.0");
-  expect(environment).not.toContain("process.env.NITRO_PUBLIC_SERVICE_URL");
   expect(environment).toMatch(
     /export const authUrl = process\.env\.NITRO_PUBLIC_AUTH_URL/,
   );
